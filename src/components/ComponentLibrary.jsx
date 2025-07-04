@@ -1,17 +1,6 @@
 import React from 'react'
 import { useDrag } from 'react-dnd'
-import { 
-  Type, 
-  Square, 
-  Image, 
-  MousePointer, 
-  Layout,
-  Smartphone,
-  Grid3X3,
-  AlignLeft,
-  Video,
-  Star
-} from 'lucide-react'
+import { Type, Square, Image, MousePointer, Layout, Smartphone, Grid as Grid3X3, AlignLeft, Video, Star } from 'lucide-react'
 
 const componentTypes = [
   {
