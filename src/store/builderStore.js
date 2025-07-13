@@ -9,6 +9,7 @@ const useBuilderStore = create(
     history: [],
     historyIndex: -1,
     previewMode: false,
+    autoCommitEnabled: true,
 
     // Actions
     addComponent: (component) => {
@@ -115,6 +116,17 @@ const useBuilderStore = create(
         version: '1.0.0',
         createdAt: new Date().toISOString()
       }
+    },
+
+    // Git integration
+    setAutoCommitEnabled: (enabled) => {
+      set({ autoCommitEnabled: enabled })
+    },
+
+    // Manual save trigger for git integration
+    triggerSave: () => {
+      // This will trigger the auto-save subscription
+      set((state) => ({ components: [...state.components] }))
     }
   }))
 )

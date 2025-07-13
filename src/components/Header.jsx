@@ -1,9 +1,13 @@
-import React from 'react'
-import { Menu, Download, Smartphone, Undo, Redo, Play } from 'lucide-react'
+import React, { useState } from 'react'
+import { Menu, Download, Smartphone, Undo, Redo, Play, GitBranch } from 'lucide-react'
 import { useBuilderStore } from '../store/builderStore'
+import { useGitStore } from '../store/gitStore'
+import GitConfigModal from './GitConfigModal'
 
 const Header = ({ onToggleSidebar, onExport, sidebarOpen }) => {
+  const [gitConfigOpen, setGitConfigOpen] = useState(false)
   const { undo, redo, canUndo, canRedo, previewMode, setPreviewMode } = useBuilderStore()
+  const { repositoryConfig } = useGitStore()
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -63,6 +67,23 @@ const Header = ({ onToggleSidebar, onExport, sidebarOpen }) => {
       {/* Right Section */}
       <div className="flex items-center space-x-2">
         <button
+          onClick={() => setGitConfigOpen(true)}
+          className={`p-2 rounded-lg transition-colors flex items-center space-x-1 ${
+            repositoryConfig.isConfigured 
+              ? 'bg-green-100 text-green-600 hover:bg-green-200' 
+              : 'hover:bg-gray-100 text-gray-600'
+          }`}
+          title={repositoryConfig.isConfigured ? 'Git Configured' : 'Configure Git'}
+        >
+          <GitBranch className="w-4 h-4" />
+          {repositoryConfig.isConfigured && (
+            <span className="hidden sm:inline text-xs">
+              {repositoryConfig.name}
+            </span>
+          )}
+        </button>
+        
+        <button
           onClick={onExport}
           className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
         >
@@ -70,6 +91,11 @@ const Header = ({ onToggleSidebar, onExport, sidebarOpen }) => {
           <span className="hidden sm:inline">Export</span>
         </button>
       </div>
+
+      <GitConfigModal 
+        isOpen={gitConfigOpen}
+        onClose={() => setGitConfigOpen(false)}
+      />
     </header>
   )
 }
