@@ -22,14 +22,14 @@
   "author": "KK - KN3AUX-CODE™",
   "license": "MIT",
   "dependencies": {
+    "html2canvas": "^1.4.1",
+    "lucide-react": "^0.263.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
-    "lucide-react": "^0.263.1",
+    "react-dom": "^18.2.0",
     "uuid": "^9.0.0",
-    "html2canvas": "^1.4.1",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
@@ -41,6 +41,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "jsdom": "^26.1.0",
     "postcss": "^8.4.27",
     "tailwindcss": "^3.3.3",
     "vite": "^4.4.5",
