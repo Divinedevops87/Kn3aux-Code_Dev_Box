@@ -7,15 +7,19 @@ import Sidebar from './components/Sidebar'
 import Canvas from './components/Canvas'
 import PropertyPanel from './components/PropertyPanel'
 import ComponentLibrary from './components/ComponentLibrary'
+import GitPanel from './components/GitPanel'
 import ExportModal from './components/ExportModal'
 import { useBuilderStore } from './store/builderStore'
+import { useGitStore } from './store/gitStore'
 import { isMobile } from './utils/deviceDetection'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile())
   const [propertyPanelOpen, setPropertyPanelOpen] = useState(false)
   const [exportModalOpen, setExportModalOpen] = useState(false)
+  const [sidebarTab, setSidebarTab] = useState('components')
   const { selectedComponent, components } = useBuilderStore()
+  const { setPendingChanges } = useGitStore()
 
   // Auto-open property panel when component is selected
   useEffect(() => {
@@ -23,6 +27,11 @@ function App() {
       setPropertyPanelOpen(true)
     }
   }, [selectedComponent])
+
+  // Track pending changes for git
+  useEffect(() => {
+    setPendingChanges(components.length > 0)
+  }, [components, setPendingChanges])
 
   const backend = isMobile() ? TouchBackend : HTML5Backend
 
@@ -38,12 +47,14 @@ function App() {
 
         {/* Main Content */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Sidebar - Component Library */}
+          {/* Sidebar - Component Library & Git */}
           <Sidebar 
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
+            activeTab={sidebarTab}
+            onTabChange={setSidebarTab}
           >
-            <ComponentLibrary />
+            {sidebarTab === 'components' ? <ComponentLibrary /> : <GitPanel />}
           </Sidebar>
 
           {/* Canvas Area */}

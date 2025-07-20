@@ -1,8 +1,33 @@
-import React from 'react'
-import { X } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { X, Package, GitBranch } from 'lucide-react'
 import { isMobile } from '../utils/deviceDetection'
 
-const Sidebar = ({ isOpen, onClose, children }) => {
+const Sidebar = ({ isOpen, onClose, children, activeTab: propActiveTab, onTabChange }) => {
+  const [activeTab, setActiveTab] = useState(propActiveTab || 'components')
+
+  // Update local state when prop changes
+  useEffect(() => {
+    if (propActiveTab) {
+      setActiveTab(propActiveTab)
+    }
+  }, [propActiveTab])
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId)
+    if (onTabChange) {
+      onTabChange(tabId)
+    }
+  }
+
+  const tabs = [
+    { id: 'components', label: 'Components', icon: Package },
+    { id: 'git', label: 'Git', icon: GitBranch }
+  ]
+
+  const renderContent = () => {
+    return children
+  }
+
   if (isMobile()) {
     return (
       <>
@@ -20,7 +45,22 @@ const Sidebar = ({ isOpen, onClose, children }) => {
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="font-semibold text-gray-900">Components</h2>
+            <div className="flex space-x-1">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`px-3 py-1 rounded-lg text-sm flex items-center space-x-1 transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-purple-100 text-purple-700'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
             <button
               onClick={onClose}
               className="p-1 hover:bg-gray-100 rounded"
@@ -29,7 +69,7 @@ const Sidebar = ({ isOpen, onClose, children }) => {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto">
-            {children}
+            {renderContent()}
           </div>
         </div>
       </>
@@ -43,10 +83,25 @@ const Sidebar = ({ isOpen, onClose, children }) => {
       ${isOpen ? 'translate-x-0' : '-translate-x-full absolute z-30'}
     `}>
       <div className="p-4 border-b border-gray-200">
-        <h2 className="font-semibold text-gray-900">Components</h2>
+        <div className="flex space-x-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`px-3 py-1 rounded-lg text-sm flex items-center space-x-1 transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-purple-100 text-purple-700'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto">
-        {children}
+        {renderContent()}
       </div>
     </div>
   )
