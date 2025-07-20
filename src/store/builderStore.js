@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
+import { generateId } from '../utils/helpers'
 
 const useBuilderStore = create(
   subscribeWithSelector((set, get) => ({
@@ -9,6 +10,7 @@ const useBuilderStore = create(
     history: [],
     historyIndex: -1,
     previewMode: false,
+    copiedComponent: null,
 
     // Actions
     addComponent: (component) => {
@@ -41,6 +43,63 @@ const useBuilderStore = create(
         return {
           components: newComponents,
           selectedComponent: null,
+          ...addToHistory(state, { components: newComponents })
+        }
+      })
+    },
+
+    duplicateComponent: (id) => {
+      set((state) => {
+        const originalComponent = state.components.find(comp => comp.id === id)
+        if (!originalComponent) return state
+
+        const duplicatedComponent = {
+          ...originalComponent,
+          id: generateId(),
+          position: {
+            x: originalComponent.position.x + 20,
+            y: originalComponent.position.y + 20
+          }
+        }
+
+        const newComponents = [...state.components, duplicatedComponent]
+        return {
+          components: newComponents,
+          selectedComponent: duplicatedComponent,
+          ...addToHistory(state, { components: newComponents })
+        }
+      })
+    },
+
+    copyComponent: (id) => {
+      set((state) => {
+        const componentToCopy = state.components.find(comp => comp.id === id)
+        if (!componentToCopy) return state
+        
+        return {
+          ...state,
+          copiedComponent: { ...componentToCopy }
+        }
+      })
+    },
+
+    pasteComponent: () => {
+      set((state) => {
+        if (!state.copiedComponent) return state
+
+        const pastedComponent = {
+          ...state.copiedComponent,
+          id: generateId(),
+          position: {
+            x: state.copiedComponent.position.x + 40,
+            y: state.copiedComponent.position.y + 40
+          }
+        }
+
+        const newComponents = [...state.components, pastedComponent]
+        return {
+          components: newComponents,
+          selectedComponent: pastedComponent,
           ...addToHistory(state, { components: newComponents })
         }
       })

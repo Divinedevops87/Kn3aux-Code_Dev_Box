@@ -1,10 +1,10 @@
 import React from 'react'
-import { X, Trash2 } from 'lucide-react'
+import { X, Trash2, Copy } from 'lucide-react'
 import { useBuilderStore } from '../store/builderStore'
 import { isMobile } from '../utils/deviceDetection'
 
 const PropertyPanel = ({ isOpen, onClose }) => {
-  const { selectedComponent, updateComponent, deleteComponent } = useBuilderStore()
+  const { selectedComponent, updateComponent, deleteComponent, duplicateComponent } = useBuilderStore()
 
   if (!selectedComponent) return null
 
@@ -33,6 +33,10 @@ const PropertyPanel = ({ isOpen, onClose }) => {
     if (isMobile()) {
       onClose()
     }
+  }
+
+  const handleDuplicate = () => {
+    duplicateComponent(selectedComponent.id)
   }
 
   const renderPropertyInputs = () => {
@@ -202,6 +206,13 @@ const PropertyPanel = ({ isOpen, onClose }) => {
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <h3 className="font-semibold text-gray-900">Properties</h3>
         <div className="flex items-center space-x-2">
+          <button
+            onClick={handleDuplicate}
+            className="p-1 text-purple-600 hover:bg-purple-50 rounded"
+            title="Duplicate Component (Ctrl+D)"
+          >
+            <Copy className="w-4 h-4" />
+          </button>
           <button
             onClick={handleDelete}
             className="p-1 text-red-600 hover:bg-red-50 rounded"
