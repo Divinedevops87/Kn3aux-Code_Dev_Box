@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BarChart3, Activity, Users, Zap, Settings, Code, Palette, Camera, Repository, Brain, 
+import { BarChart3, Activity, Users, Zap, Settings, Code, Palette, Camera, Database, Brain, 
          Monitor, TrendingUp, Clock, HardDrive, Cpu, Wifi, Globe } from 'lucide-react'
 import useActivityStore, { ActivityLogger } from '../modules/ActivityLogger'
 import useDeveloperStore, { DeveloperTools } from '../modules/DeveloperTools'
@@ -82,7 +82,7 @@ const Dashboard = ({ isOpen, onClose }) => {
           color="green"
         />
         <StatCard
-          icon={Repository}
+          icon={Database}
           title="Repositories"
           value={repositories.length}
           subtitle="Offline mirrors"
