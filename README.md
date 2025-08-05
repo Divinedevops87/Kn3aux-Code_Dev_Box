@@ -166,6 +166,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **GitHub**: [Source Code](https://github.com/kk/kn3aux-code-suite)
 - **Issues**: [Report Bugs](https://github.com/kk/kn3aux-code-suite/issues)
 
+## 🛠 Utility Scripts
+
+### Termux Widget Integration
+The `scripts/termux-widgets/` directory contains utility scripts for Android/Termux integration:
+
+- **kn3aux_shizuku.sh**: KN3AUX® Shizuku Shortcut Injector for Termux Widget
+  - Launch KN3AUX ScriptDeck applications
+  - Toggle Crawfish overlay engine
+  - Modular shortcut system for mobile workflows
+
+See [scripts/termux-widgets/README.md](scripts/termux-widgets/README.md) for installation and usage instructions.
+
 ## 🎉 What's Next?
 
 - [ ] Android APK export
