@@ -8,6 +8,7 @@ import Canvas from './components/Canvas'
 import PropertyPanel from './components/PropertyPanel'
 import ComponentLibrary from './components/ComponentLibrary'
 import ExportModal from './components/ExportModal'
+import QwenAIAgent from './components/QwenAIAgent'
 import { useBuilderStore } from './store/builderStore'
 import { isMobile } from './utils/deviceDetection'
 
@@ -15,6 +16,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile())
   const [propertyPanelOpen, setPropertyPanelOpen] = useState(false)
   const [exportModalOpen, setExportModalOpen] = useState(false)
+  const [aiAgentOpen, setAiAgentOpen] = useState(false)
   const { selectedComponent, components } = useBuilderStore()
 
   // Auto-open property panel when component is selected
@@ -33,7 +35,9 @@ function App() {
         <Header 
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           onExport={() => setExportModalOpen(true)}
+          onToggleAI={() => setAiAgentOpen(!aiAgentOpen)}
           sidebarOpen={sidebarOpen}
+          aiAgentOpen={aiAgentOpen}
         />
 
         {/* Main Content */}
@@ -75,6 +79,28 @@ function App() {
           isOpen={exportModalOpen}
           onClose={() => setExportModalOpen(false)}
         />
+
+        {/* AI Agent Modal */}
+        {aiAgentOpen && (
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex">
+            <div className="w-full max-w-6xl mx-auto my-4 bg-white rounded-lg overflow-hidden">
+              <div className="flex justify-between items-center p-4 border-b bg-gray-50">
+                <h2 className="text-lg font-semibold">🧠 Qwen AI Agent</h2>
+                <button
+                  onClick={() => setAiAgentOpen(false)}
+                  className="p-2 hover:bg-gray-200 rounded-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="h-[calc(100vh-8rem)]">
+                <QwenAIAgent />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Mobile Property Panel Toggle */}
         {isMobile() && selectedComponent && (
