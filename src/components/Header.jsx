@@ -1,8 +1,8 @@
 import React from 'react'
-import { Menu, Download, Smartphone, Undo, Redo, Play } from 'lucide-react'
+import { Menu, Download, Smartphone, Undo, Redo, Play, Brain } from 'lucide-react'
 import { useBuilderStore } from '../store/builderStore'
 
-const Header = ({ onToggleSidebar, onExport, sidebarOpen }) => {
+const Header = ({ onToggleSidebar, onExport, onToggleAI, sidebarOpen, aiAgentOpen }) => {
   const { undo, redo, canUndo, canRedo, previewMode, setPreviewMode } = useBuilderStore()
 
   return (
@@ -62,6 +62,17 @@ const Header = ({ onToggleSidebar, onExport, sidebarOpen }) => {
 
       {/* Right Section */}
       <div className="flex items-center space-x-2">
+        <button
+          onClick={onToggleAI}
+          className={`p-2 rounded-lg transition-colors flex items-center space-x-2 ${
+            aiAgentOpen ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100'
+          }`}
+          title="AI Agent"
+        >
+          <Brain className="w-4 h-4" />
+          <span className="hidden sm:inline">AI Agent</span>
+        </button>
+        
         <button
           onClick={onExport}
           className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
