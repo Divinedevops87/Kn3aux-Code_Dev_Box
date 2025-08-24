@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
-import { X, Download, Code, Smartphone, Globe } from 'lucide-react'
+import { X, Download, Code, Smartphone, Globe, GitBranch } from 'lucide-react'
 import { useBuilderStore } from '../store/builderStore'
-import { exportToReact, exportToHTML, exportToJSON } from '../utils/exportHelpers'
+import { useGitStore } from '../store/gitStore'
+import { exportToReact, exportToHTML, exportToJSON, exportWithGitSetup } from '../utils/exportHelpers'
 
 const ExportModal = ({ isOpen, onClose }) => {
   const [exportType, setExportType] = useState('react')
   const [isExporting, setIsExporting] = useState(false)
+  const [includeGitSetup, setIncludeGitSetup] = useState(true)
   const { components } = useBuilderStore()
+  const { repositoryConfig } = useGitStore()
 
   if (!isOpen) return null
 
@@ -14,38 +17,60 @@ const ExportModal = ({ isOpen, onClose }) => {
     setIsExporting(true)
     
     try {
-      let content, filename, mimeType
+      if (includeGitSetup && repositoryConfig.isConfigured) {
+        // Export with git setup
+        const exportData = exportWithGitSetup(components, exportType, repositoryConfig)
+        
+        // Create and download multiple files as ZIP would be ideal, but for simplicity, download separately
+        for (const file of exportData.files) {
+          const blob = new Blob([file.content], { type: file.type })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = file.name
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+          URL.revokeObjectURL(url)
+          
+          // Small delay between downloads
+          await new Promise(resolve => setTimeout(resolve, 100))
+        }
+      } else {
+        // Standard export
+        let content, filename, mimeType
 
-      switch (exportType) {
-        case 'react':
-          content = exportToReact(components)
-          filename = 'App.jsx'
-          mimeType = 'text/javascript'
-          break
-        case 'html':
-          content = exportToHTML(components)
-          filename = 'index.html'
-          mimeType = 'text/html'
-          break
-        case 'json':
-          content = exportToJSON(components)
-          filename = 'project.json'
-          mimeType = 'application/json'
-          break
-        default:
-          throw new Error('Unknown export type')
+        switch (exportType) {
+          case 'react':
+            content = exportToReact(components)
+            filename = 'App.jsx'
+            mimeType = 'text/javascript'
+            break
+          case 'html':
+            content = exportToHTML(components)
+            filename = 'index.html'
+            mimeType = 'text/html'
+            break
+          case 'json':
+            content = exportToJSON(components)
+            filename = 'project.json'
+            mimeType = 'application/json'
+            break
+          default:
+            throw new Error('Unknown export type')
+        }
+
+        // Create and download file
+        const blob = new Blob([content], { type: mimeType })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
       }
-
-      // Create and download file
-      const blob = new Blob([content], { type: mimeType })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
 
     } catch (error) {
       console.error('Export failed:', error)
@@ -78,6 +103,8 @@ const ExportModal = ({ isOpen, onClose }) => {
       color: 'text-purple-600'
     }
   ]
+
+  const shouldShowGitOption = repositoryConfig.isConfigured
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -129,6 +156,33 @@ const ExportModal = ({ isOpen, onClose }) => {
               </label>
             ))}
           </div>
+
+          {shouldShowGitOption && (
+            <div className="border border-gray-200 rounded-lg p-4">
+              <label className="flex items-start space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includeGitSetup}
+                  onChange={(e) => setIncludeGitSetup(e.target.checked)}
+                  className="mt-1"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2">
+                    <GitBranch className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-medium text-gray-900">Include Git Setup</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Include git repository setup instructions and configuration files
+                  </p>
+                  {repositoryConfig.name && (
+                    <p className="text-xs text-purple-600 mt-1">
+                      Repository: {repositoryConfig.name}
+                    </p>
+                  )}
+                </div>
+              </label>
+            </div>
+          )}
 
           {components.length === 0 && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
