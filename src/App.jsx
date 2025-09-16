@@ -10,12 +10,16 @@ import ComponentLibrary from './components/ComponentLibrary'
 import ExportModal from './components/ExportModal'
 import { useBuilderStore } from './store/builderStore'
 import { isMobile } from './utils/deviceDetection'
+import { useKeyboardShortcuts } from './utils/useKeyboardShortcuts'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile())
   const [propertyPanelOpen, setPropertyPanelOpen] = useState(false)
   const [exportModalOpen, setExportModalOpen] = useState(false)
   const { selectedComponent, components } = useBuilderStore()
+
+  // Initialize keyboard shortcuts
+  useKeyboardShortcuts()
 
   // Auto-open property panel when component is selected
   useEffect(() => {

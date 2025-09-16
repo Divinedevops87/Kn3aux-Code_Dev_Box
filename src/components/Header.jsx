@@ -1,9 +1,21 @@
 import React from 'react'
-import { Menu, Download, Smartphone, Undo, Redo, Play } from 'lucide-react'
+import { Menu, Download, Smartphone, Undo, Redo, Play, Copy, Clipboard } from 'lucide-react'
 import { useBuilderStore } from '../store/builderStore'
 
 const Header = ({ onToggleSidebar, onExport, sidebarOpen }) => {
-  const { undo, redo, canUndo, canRedo, previewMode, setPreviewMode } = useBuilderStore()
+  const { 
+    undo, 
+    redo, 
+    canUndo, 
+    canRedo, 
+    previewMode, 
+    setPreviewMode, 
+    selectedComponent,
+    copyComponent,
+    pasteComponent,
+    duplicateComponent,
+    copiedComponent
+  } = useBuilderStore()
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -45,6 +57,27 @@ const Header = ({ onToggleSidebar, onExport, sidebarOpen }) => {
           title="Redo"
         >
           <Redo className="w-4 h-4" />
+        </button>
+
+        <div className="w-px h-6 bg-gray-300 mx-2" />
+
+        {/* Copy/Paste Actions */}
+        <button
+          onClick={() => selectedComponent && copyComponent(selectedComponent.id)}
+          disabled={!selectedComponent}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Copy (Ctrl+C)"
+        >
+          <Copy className="w-4 h-4" />
+        </button>
+        
+        <button
+          onClick={pasteComponent}
+          disabled={!copiedComponent}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Paste (Ctrl+V)"
+        >
+          <Clipboard className="w-4 h-4" />
         </button>
 
         <div className="w-px h-6 bg-gray-300 mx-2" />
